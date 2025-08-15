@@ -1,0 +1,580 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ToolKit Pro - Online Image & PDF Tools</title>
+    <meta name="description" content="Free online tools for images and PDFs. Compress, convert, edit and optimize your files.">
+    
+    <!-- Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- PDF Libraries -->
+    <script src="https://unpkg.com/pdf-lib@1.16.0/dist/pdf-lib.min.js"></script>
+    <script src="https://unpkg.com/downloadjs@1.4.7"></script>
+    
+    <!-- AdSense -->
+    <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js?client=ca-pub-YOUR_ADSENSE_ID" crossorigin="anonymous"></script>
+    
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-dark: #3a56d4;
+            --accent: #4895ef;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --light-gray: #e9ecef;
+            --success: #4cc9f0;
+            --danger: #f72585;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Poppins', sans-serif;
+            line-height: 1.6;
+            color: var(--dark);
+            background-color: var(--light);
+        }
+        
+        .container {
+            width: 100%;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Header Styles */
+        header {
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        
+        .header-container {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 0;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            text-decoration: none;
+        }
+        
+        .logo-icon {
+            font-size: 2rem;
+            color: var(--primary);
+            margin-right: 10px;
+        }
+        
+        .logo-text {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--dark);
+        }
+        
+        .logo-text span {
+            color: var(--primary);
+        }
+        
+        nav ul {
+            display: flex;
+            list-style: none;
+        }
+        
+        nav ul li {
+            margin-left: 25px;
+        }
+        
+        nav ul li a {
+            text-decoration: none;
+            color: var(--dark);
+            font-weight: 500;
+            transition: color 0.3s;
+        }
+        
+        nav ul li a:hover {
+            color: var(--primary);
+        }
+        
+        .mobile-menu-btn {
+            display: none;
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            color: var(--dark);
+            cursor: pointer;
+        }
+        
+        /* Hero Section */
+        .hero {
+            background: linear-gradient(135deg, var(--primary), var(--accent));
+            color: white;
+            padding: 80px 0;
+            text-align: center;
+        }
+        
+        .hero h1 {
+            font-size: 2.8rem;
+            margin-bottom: 20px;
+            line-height: 1.2;
+        }
+        
+        .hero p {
+            font-size: 1.2rem;
+            max-width: 700px;
+            margin: 0 auto 30px;
+            opacity: 0.9;
+        }
+        
+        /* Tool Sections */
+        .section {
+            padding: 80px 0;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 50px;
+        }
+        
+        .section-title h2 {
+            font-size: 2.2rem;
+            margin-bottom: 15px;
+            color: var(--dark);
+        }
+        
+        .section-title p {
+            color: var(--gray);
+            max-width: 700px;
+            margin: 0 auto;
+        }
+        
+        /* Tool Cards */
+        .tools-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+            gap: 25px;
+        }
+        
+        .tool-card {
+            background-color: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .tool-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.1);
+        }
+        
+        .tool-card-img {
+            height: 160px;
+            background-color: var(--light-gray);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3.5rem;
+            color: var(--primary);
+        }
+        
+        .tool-card-content {
+            padding: 20px;
+        }
+        
+        .tool-card h3 {
+            font-size: 1.3rem;
+            margin-bottom: 10px;
+        }
+        
+        .tool-card p {
+            color: var(--gray);
+            margin-bottom: 20px;
+            font-size: 0.95rem;
+        }
+        
+        /* Tool Interfaces */
+        .tool-interface {
+            display: none; /* Initially hidden */
+        }
+        
+        .active-tool .tool-interface {
+            display: block;
+        }
+        
+        .active-tool .tool-card-img {
+            display: none;
+        }
+        
+        .active-tool .tool-card-content > h3,
+        .active-tool .tool-card-content > p {
+            display: none;
+        }
+        
+        /* Drop Areas */
+        .drop-area {
+            border: 2px dashed var(--primary);
+            border-radius: 8px;
+            padding: 30px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 15px;
+            transition: all 0.3s;
+        }
+        
+        .drop-area:hover {
+            background-color: rgba(67, 97, 238, 0.05);
+        }
+        
+        /* Buttons */
+        .btn {
+            display: inline-block;
+            background-color: var(--primary);
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            text-decoration: none;
+            transition: background-color 0.3s;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1rem;
+        }
+        
+        .btn:hover {
+            background-color: var(--primary-dark);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 2px solid var(--primary);
+            color: var(--primary);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--primary);
+            color: white;
+        }
+        
+        /* Controls */
+        .controls {
+            margin: 20px 0;
+        }
+        
+        .controls label {
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        input[type="range"] {
+            width: 100%;
+            margin-bottom: 15px;
+        }
+        
+        /* Results */
+        .result-container {
+            margin-top: 20px;
+            display: none;
+        }
+        
+        .result-container img {
+            max-width: 100%;
+            border-radius: 5px;
+            margin-bottom: 15px;
+        }
+        
+        /* Ad Banners */
+        .ad-banner {
+            background-color: var(--light-gray);
+            padding: 15px;
+            text-align: center;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        
+        /* Responsive Styles */
+        @media (max-width: 992px) {
+            .hero h1 {
+                font-size: 2.4rem;
+            }
+            
+            .section {
+                padding: 60px 0;
+            }
+        }
+        
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 15px 0;
+            }
+            
+            nav {
+                position: fixed;
+                top: 70px;
+                left: -100%;
+                width: 100%;
+                height: calc(100vh - 70px);
+                background-color: white;
+                transition: all 0.3s;
+                padding: 20px;
+                box-shadow: 0 5px 10px rgba(0,0,0,0.1);
+            }
+            
+            nav.active {
+                left: 0;
+            }
+            
+            nav ul {
+                flex-direction: column;
+            }
+            
+            nav ul li {
+                margin: 0 0 15px 0;
+            }
+            
+            .mobile-menu-btn {
+                display: block;
+            }
+            
+            .hero {
+                padding: 60px 0;
+            }
+            
+            .hero h1 {
+                font-size: 2rem;
+            }
+            
+            .hero p {
+                font-size: 1rem;
+            }
+        }
+        
+        @media (max-width: 576px) {
+            .hero h1 {
+                font-size: 1.8rem;
+            }
+            
+            .section-title h2 {
+                font-size: 1.6rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container header-container">
+            <a href="#" class="logo" id="homeLink">
+                <i class="fas fa-tools logo-icon"></i>
+                <span class="logo-text">Tool<span>Kit</span> Pro</span>
+            </a>
+            
+            <button class="mobile-menu-btn" id="mobileMenuBtn">
+                <i class="fas fa-bars"></i>
+            </button>
+            
+            <nav id="mainNav">
+                <ul>
+                    <li><a href="#" id="navHome">Home</a></li>
+                    <li><a href="#" id="navImageTools">Image Tools</a></li>
+                    <li><a href="#" id="navPdfTools">PDF Tools</a></li>
+                </ul>
+            </nav>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="container">
+        <!-- Home Section -->
+        <section id="homeSection">
+            <div class="hero">
+                <h1>Powerful Online Tools for Images & PDFs</h1>
+                <p>Free, easy-to-use tools to compress, convert, edit and optimize your files. No installation required - works directly in your browser.</p>
+                <div class="cta-buttons">
+                    <a href="#" class="btn btn-primary" id="imageToolsBtn">Image Tools</a>
+                    <a href="#" class="btn btn-outline" id="pdfToolsBtn">PDF Tools</a>
+                </div>
+            </div>
+            
+            <!-- Ad Banner -->
+            <div class="ad-banner">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-YOUR_ADSENSE_ID"
+                     data-ad-slot="YOUR_AD_SLOT_ID"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </section>
+
+        <!-- Image Tools Section -->
+        <section id="imageToolsSection" class="section" style="display:none;">
+            <div class="section-title">
+                <h2>Image Tools</h2>
+                <p>Optimize and transform your images with our collection of powerful tools</p>
+            </div>
+            
+            <div class="tools-grid">
+                <!-- Image Compressor -->
+                <div class="tool-card" id="imageCompressorCard">
+                    <div class="tool-card-img">
+                        <i class="fas fa-compress-alt"></i>
+                    </div>
+                    <div class="tool-card-content">
+                        <h3>Image Compressor</h3>
+                        <p>Reduce image file size without losing quality. Supports JPG, PNG, and WebP formats.</p>
+                        
+                        <div class="tool-interface">
+                            <div class="drop-area" id="imageDropArea">
+                                <i class="fas fa-cloud-upload-alt fa-2x"></i>
+                                <p>Drag & drop image or click to select</p>
+                                <input type="file" id="imageInput" accept="image/*" style="display:none;">
+                            </div>
+                            <div class="controls" id="imageControls" style="display:none;">
+                                <label>
+                                    Quality: 
+                                    <input type="range" id="imageQuality" min="1" max="100" value="80">
+                                    <span id="qualityValue">80%</span>
+                                </label>
+                                <button id="compressImageBtn" class="btn">Compress Image</button>
+                            </div>
+                            <div class="result-container" id="imageResultContainer">
+                                <h4>Compressed Image:</h4>
+                                <img id="compressedImagePreview" src="" alt="Compressed Image Preview">
+                                <a id="downloadImageBtn" class="btn">Download Compressed Image</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- Image Converter -->
+                <div class="tool-card" id="imageConverterCard">
+                    <div class="tool-card-img">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
+                    <div class="tool-card-content">
+                        <h3>Image Converter</h3>
+                        <p>Convert between JPG, PNG, WebP, GIF and other popular image formats.</p>
+                        
+                        <div class="tool-interface">
+                            <div class="drop-area" id="converterDropArea">
+                                <i class="fas fa-cloud-upload-alt fa-2x"></i>
+                                <p>Drag & drop image or click to select</p>
+                                <input type="file" id="converterInput" accept="image/*" style="display:none;">
+                            </div>
+                            <div class="controls" id="converterControls" style="display:none;">
+                                <label>
+                                    Output Format:
+                                    <select id="outputFormat">
+                                        <option value="jpeg">JPEG</option>
+                                        <option value="png">PNG</option>
+                                        <option value="webp">WebP</option>
+                                    </select>
+                                </label>
+                                <button id="convertImageBtn" class="btn">Convert Image</button>
+                            </div>
+                            <div class="result-container" id="converterResultContainer">
+                                <h4>Converted Image:</h4>
+                                <img id="convertedImagePreview" src="" alt="Converted Image Preview">
+                                <a id="downloadConvertedBtn" class="btn">Download Converted Image</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Ad Banner -->
+            <div class="ad-banner">
+                <ins class="adsbygoogle"
+                     style="display:block"
+                     data-ad-client="ca-pub-YOUR_ADSENSE_ID"
+                     data-ad-slot="YOUR_AD_SLOT_ID_2"
+                     data-ad-format="auto"
+                     data-full-width-responsive="true"></ins>
+                <script>
+                     (adsbygoogle = window.adsbygoogle || []).push({});
+                </script>
+            </div>
+        </section>
+
+        <!-- PDF Tools Section -->
+        <section id="pdfToolsSection" class="section" style="display:none;">
+            <div class="section-title">
+                <h2>PDF Tools</h2>
+                <p>Edit, convert and manipulate PDF documents with our easy online tools</p>
+            </div>
+            
+            <div class="tools-grid">
+                <!-- PDF Compressor -->
+                <div class="tool-card" id="pdfCompressorCard">
+                    <div class="tool-card-img">
+                        <i class="fas fa-file-pdf"></i>
+                    </div>
+                    <div class="tool-card-content">
+                        <h3>PDF Compressor</h3>
+                        <p>Reduce PDF file size while maintaining quality. Perfect for email attachments.</p>
+                        
+                        <div class="tool-interface">
+                            <div class="drop-area" id="pdfDropArea">
+                                <i class="fas fa-cloud-upload-alt fa-2x"></i>
+                                <p>Drag & drop PDF or click to select</p>
+                                <input type="file" id="pdfInput" accept=".pdf" style="display:none;">
+                            </div>
+                            <div class="controls" id="pdfControls" style="display:none;">
+                                <label>
+                                    Compression Level:
+                                    <select id="pdfCompressionLevel">
+                                        <option value="low">Low (Better Quality)</option>
+                                        <option value="medium" selected>Medium (Balanced)</option>
+                                        <option value="high">High (Smaller File)</option>
+                                    </select>
+                                </label>
+                                <button id="compressPdfBtn" class="btn">Compress PDF</button>
+                            </div>
+                            <div class="result-container" id="pdfResultContainer">
+                                <h4>Compressed PDF Ready:</h4>
+                                <p>File size reduced by <span id="sizeReduction">0%</span></p>
+                                <a id="downloadPdfBtn" class="btn">Download Compressed PDF</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                
+                <!-- PDF Merger -->
+                <div class="tool-card" id="pdfMergerCard">
+                    <div class="tool-card-img">
+                        <i class="fas fa-object-group"></i>
+                    </div>
+                    <div class="tool-card-content">
+                        <h3>PDF Merger</h3>
+                        <p>Combine multiple PDF files into a single document in seconds.</p>
+                        
+                        <div class="tool-interface">
+                            <div class="drop-area" id="mergerDropArea">
+                                <i class="fas fa-cloud-upload-alt fa-2x"></i>
+                                <p>Drag & drop PDFs or click to select multiple</p>
+                                <input type="file" id="mergerInput" accept=".pdf" multiple style="display:none;">
+                            </div>
+                            <div id="pdfListContainer" style="display:none;">
+                                <h4>Selected PDFs:</h4>
+                                <ul id="pdfList"></ul>
+                                <button id="mergePdfsBtn" class="btn">Merge PDFs</button>
+                            </div>
+          
